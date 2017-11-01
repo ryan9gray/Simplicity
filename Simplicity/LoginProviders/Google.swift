@@ -30,7 +30,7 @@ import Foundation
  }
  ```
  */
-public class Google: OAuth2 {
+open class Google: OAuth2 {
     
     /**
      Initializes the Google login object. Auto configures based on the URL
@@ -43,11 +43,11 @@ public class Google: OAuth2 {
         }
         
         let appId = urlScheme.components(separatedBy: ".").reversed().joined(separator: ".")
-        let authorizationEndpoint = URL(string: "https://accounts.google.com/o/oauth2/auth")!
+        let authorizationEndpoint = URL(string: "https://accounts.google.com/o/oauth2/v2/auth")!
         let redirectionEndpoint = URL(string: "\(urlScheme):/oauth2callback")!
         
         super.init(clientId: appId, authorizationEndpoint: authorizationEndpoint, redirectEndpoint: redirectionEndpoint, grantType: .AuthorizationCode)
-        self.scopes = ["email", "profile"]
+        self.scopes = ["email", "profile", "openid"]
     }
     
     /**
@@ -57,7 +57,7 @@ public class Google: OAuth2 {
      - url: The OAuth redirect URL
      - callback: A callback that returns with an access token or NSError.
      */
-    override public func linkHandler(_ url: URL, callback: @escaping ExternalLoginCallback) {
+    override open func linkHandler(_ url: URL, callback: @escaping ExternalLoginCallback) {
         guard let authorizationCode = url.queryDictionary["code"], url.queryDictionary["state"] == state else {
             if let error = OAuth2Error.error(url.queryDictionary) ?? OAuth2Error.error(url.queryDictionary) {
                 callback(nil, error)
@@ -69,7 +69,7 @@ public class Google: OAuth2 {
         exchangeCodeForAccessToken(authorizationCode, callback: callback)
     }
     
-    private func exchangeCodeForAccessToken(_ authorizationCode: String, callback: @escaping ExternalLoginCallback) {
+    fileprivate func exchangeCodeForAccessToken(_ authorizationCode: String, callback: @escaping ExternalLoginCallback) {
         let session = URLSession(configuration: URLSessionConfiguration.ephemeral)
         let url = URL(string: "https://www.googleapis.com/oauth2/v4/token")!
         
@@ -83,7 +83,7 @@ public class Google: OAuth2 {
         request.httpBody = Helpers.queryString(requestParams)?.data(using: String.Encoding.utf8)
         
         let task = session.dataTask(with: request) { (data, response, error) -> Void in
-            guard let data = data, let json = (try? JSONSerialization.jsonObject(with: data, options: [])) as? [String: Any], let accessToken = json["access_token"] as? String else {
+            guard let data = data, let json = (try? JSONSerialization.jsonObject(with: data, options: [])) as? [String: Any], let accessToken = json["id_token"] as? String else {
                 callback(nil, LoginError.InternalSDKError) // This request should not fail.
                 return
             }

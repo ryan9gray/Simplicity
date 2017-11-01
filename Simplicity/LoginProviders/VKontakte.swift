@@ -26,7 +26,7 @@
  ```
  */
 
-public class VKontakte: OAuth2 {
+open class VKontakte: OAuth2 {
 
     public init() {
         guard let urlScheme = Helpers.registeredURLSchemes(filter: {$0.hasPrefix("vk")}).first,
@@ -36,7 +36,7 @@ public class VKontakte: OAuth2 {
         let clientId = urlScheme.substring(with: range)
         let authorizationEndpoint = URL(string: "https://oauth.vk.com/authorize")!
         let redirectEndpoint = URL(string: urlScheme + "://authorize")!
-
+        //self.scopes = ["offline"]
         super.init(clientId: clientId, authorizationEndpoint: authorizationEndpoint, redirectEndpoint: redirectEndpoint, grantType: .Implicit)
     }
 }

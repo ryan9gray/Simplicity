@@ -13,7 +13,7 @@ import Foundation
  Error codes subject to change, so initialize a OAuth2ErrorCode enum with the 
  raw value of the error code to check.
  */
-public class OAuth2Error: LoginError {
+open class OAuth2Error: LoginError {
     /// A mapping of OAuth 2 Error strings to OAuth2ErrorCode enum.
     public static let mapping: [String: OAuth2ErrorCode] = [ "invalid_request": .invalidRequest,
                                                              "unauthorized_client": .unauthorizedClient,

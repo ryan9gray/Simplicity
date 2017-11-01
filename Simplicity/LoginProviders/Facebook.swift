@@ -31,14 +31,16 @@ import Foundation
  }
  ```
  */
-public class Facebook: OAuth2 {
+open class Facebook: OAuth2 {
     /// Facebook Auth Type
-    public var authType = FacebookAuthType.None
+    open var authType = FacebookAuthType.None
     
     /// An array with query string parameters for the authorization URL.
-    override public var authorizationURLParameters: [String : String?] {
+    override open var authorizationURLParameters: [String : String?] {
         var result = super.authorizationURLParameters
         result["auth_type"] = authType.rawValue
+        result["fields"] = "email"
+
         return result
     }
     

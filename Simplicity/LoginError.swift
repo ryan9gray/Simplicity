@@ -12,7 +12,7 @@ import Foundation
  An error produced by a LoginProvider on redirecting back to the app. Error 
  domain is "Simplicity"
  */
-public class LoginError: NSError {
+open class LoginError: NSError {
     /// An error that should never happen. If seen, please open a GitHub issue.
     public static let InternalSDKError = LoginError(code: 0, description: "Internal SDK Error")
     
